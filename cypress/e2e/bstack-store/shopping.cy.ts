@@ -39,7 +39,7 @@ describe('opens webpage', () => {
         })
     })
 
-    it('orders products by prices - asc', () => {
+    it('orders products by price - asc', () => {
         ProductsPage.get_listed_products().should('be.visible')
         ProductsPage.order_products_by_price_asc()
         ProductsPage.get_loading_spinner().should('not.exist')
@@ -50,7 +50,7 @@ describe('opens webpage', () => {
         })
     })
 
-    it('orders products by prices - desc', () => {
+    it('orders products by price - desc', () => {
         ProductsPage.get_listed_products().should('be.visible')
         ProductsPage.order_products_by_price_desc()
         ProductsPage.get_loading_spinner().should('not.exist')
