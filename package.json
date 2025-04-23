@@ -14,5 +14,8 @@
     "@types/node": "^22.10.5",
     "cypress": "^13.17.0",
     "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "fs-jetpack": "^5.1.0"
   }
 }

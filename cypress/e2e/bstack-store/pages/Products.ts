@@ -1,6 +1,6 @@
 type ChainablePageElement = Cypress.Chainable<JQuery<HTMLElement>>
 
-class ProductsPage {
+class Products {
     
     private filter_buttons = '.filters span.checkmark'
     private products_found_label = '.shelf-container-header .products-found'
@@ -171,4 +171,4 @@ class ProductsPage {
     }
 }
 
-export default new ProductsPage()
+export default new Products()

@@ -1,4 +1,4 @@
-import { api_sign_in_test_user } from "./pages/Sessions"
+import { api_sign_in_test_user } from "../utils/Sessions"
 
 describe('completes checkout', () => {
     beforeEach(() => {
