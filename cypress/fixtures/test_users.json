@@ -1,0 +1,8 @@
+{
+    "users": {
+        "demouser": {
+            "userName": "demouser",
+            "password": "testingisfun99"
+        }
+    }
+}
