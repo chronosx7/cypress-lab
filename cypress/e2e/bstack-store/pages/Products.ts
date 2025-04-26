@@ -18,8 +18,9 @@ class Products {
     private price_container = '.shelf-item__price .val'
     private price_symbol = '.val small'
     
-    private open_cart_drawer = '.float-cart .bag--float-cart-closed'
-    private close_cart_drawer = '.float-cart .float-cart__close-btn'
+    private cart_container = '.float-cart'
+    private open_cart_button = '.float-cart .bag--float-cart-closed'
+    private close_cart_button = '.float-cart .float-cart__close-btn'
     private cart_contents = '.float-cart .float-cart__content'
     private cart_items_counter = '.float-cart .bag__quantity'
     private items_in_cart = '.float-cart__shelf-container .shelf-item'
@@ -29,6 +30,7 @@ class Products {
     private cart_item_quantity = '.shelf-item__details .desc'
     private cart_footer = '.float-cart__footer'
     private cart_change_item_buttons = 'button.change-product-button'
+    private cart_checkout_btn = '.float-cart__footer .buy-btn'
 
     private price_regex = /\d+(?:\.\d{1,2})?/
     
@@ -96,6 +98,10 @@ class Products {
         return cy.get(this.products_found_label)
     }
 
+    get_cart_container(): ChainablePageElement {
+        return cy.get(this.cart_container)
+    }
+
     get_cart_contents(): ChainablePageElement {
         return cy.get(this.cart_contents)
     }
@@ -125,11 +131,11 @@ class Products {
     }
     
     open_side_cart(): void {
-        cy.get(this.open_cart_drawer).click()
+        cy.get(this.open_cart_button).click()
     }
     
     close_side_cart(): void {
-        cy.get(this.close_cart_drawer).click()
+        cy.get(this.close_cart_button).click()
     }
     
     add_product_to_cart(index: number): void {
@@ -168,6 +174,10 @@ class Products {
             installment_amount: installment_amount
         }
         
+    }
+
+    get_cart_chekout_btn(): ChainablePageElement {
+        return cy.get(this.cart_checkout_btn)
     }
 }
 

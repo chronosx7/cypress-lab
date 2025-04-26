@@ -18,11 +18,11 @@ export function api_sign_in_test_user(username: string): void {
 }
 /**
  * TODOS - Checkout
- * - Continue shopping button changes to checkout when there are items in cart
+ * - Continue Shopping button changes to Checkout when there are items in cart
  * - Checkout button navigates to /checkout
  * - Shipping address form must be full before submitting a purchase
  * - There's an order summary on the right. All added items are listed
- * - List on the right shows number of items, price units of each item
+ * - List on the right shows number of items, price and units of each item
  * - Total is shown on the right at the end of the list
  * - Total doesn't change between pages
  * - Form submission navigates to /confirmation
