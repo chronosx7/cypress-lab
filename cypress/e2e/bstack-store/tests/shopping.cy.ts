@@ -105,8 +105,8 @@ describe('opens webpage', () => {
                     const footer_data = Products.get_cart_footer_data(footer)
 
                     expect(product_data.quantity).to.equal(3)
-                    expect(footer_data.sub_price).to.equal(product_data.price * 3)
-                    expect(footer_data.installment_amount).to.equal(Number((footer_data.sub_price / footer_data.installments).toFixed(2)))
+                    expect(footer_data.subtotal).to.equal(product_data.price * 3)
+                    expect(footer_data.installment_amount).to.equal(Number((footer_data.subtotal / footer_data.number_installments).toFixed(2)))
                 })
 
                 cy.wrap(btn_remove).click()
@@ -115,8 +115,8 @@ describe('opens webpage', () => {
                     const footer_data = Products.get_cart_footer_data(footer)
 
                     expect(product_data.quantity).to.equal(2)
-                    expect(footer_data.sub_price).to.equal(product_data.price * 2)
-                    expect(footer_data.installment_amount).to.equal(Number((footer_data.sub_price / footer_data.installments).toFixed(2)))
+                    expect(footer_data.subtotal).to.equal(product_data.price * 2)
+                    expect(footer_data.installment_amount).to.equal(Number((footer_data.subtotal / footer_data.number_installments).toFixed(2)))
                 })
                 cy.wrap(btn_remove).click().should('be.disabled')
             })
