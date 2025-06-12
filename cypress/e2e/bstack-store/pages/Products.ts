@@ -1,4 +1,17 @@
-type ChainablePageElement = Cypress.Chainable<JQuery<HTMLElement>>
+import { ChainablePageElement } from "../utils/types"
+
+export interface CartItem {
+    name: string;
+    price: number;
+    quantity: number;
+}
+  
+export interface CartData {
+    items: CartItem[];
+    subtotal: number;
+    number_installments: number;
+    installment_amount: number;
+}
 
 class Products {
     
@@ -18,8 +31,9 @@ class Products {
     private price_container = '.shelf-item__price .val'
     private price_symbol = '.val small'
     
-    private open_cart_drawer = '.float-cart .bag--float-cart-closed'
-    private close_cart_drawer = '.float-cart .float-cart__close-btn'
+    private cart_container = '.float-cart'
+    private open_cart_button = '.float-cart .bag--float-cart-closed'
+    private close_cart_button = '.float-cart .float-cart__close-btn'
     private cart_contents = '.float-cart .float-cart__content'
     private cart_items_counter = '.float-cart .bag__quantity'
     private items_in_cart = '.float-cart__shelf-container .shelf-item'
@@ -29,6 +43,7 @@ class Products {
     private cart_item_quantity = '.shelf-item__details .desc'
     private cart_footer = '.float-cart__footer'
     private cart_change_item_buttons = 'button.change-product-button'
+    private cart_checkout_btn = '.float-cart__footer .buy-btn'
 
     private price_regex = /\d+(?:\.\d{1,2})?/
     
@@ -36,7 +51,7 @@ class Products {
         name: string;
         currency: string;
         price: number;
-        installments: number;
+        number_installments: number;
         installment_amount: number;
     } {
         const name = el.find(this.product_title).text().trim();
@@ -49,16 +64,12 @@ class Products {
             name,
             currency,
             price,
-            installments,
+            number_installments: installments,
             installment_amount: installmentAmount
         }
     }
     
-    get_cart_product_data(el: JQuery<HTMLElement>): {
-        name: string;
-        price: number;
-        quantity: number;
-    } {
+    get_cart_product_data(el: JQuery<HTMLElement>): CartItem {
         const name = el.find(this.cart_item_name).text().trim()
         const price = Number(el.find(this.cart_item_price).text().match(this.price_regex))
         const quantity = Number(el.find(this.cart_item_quantity).text().match(this.price_regex))
@@ -96,6 +107,10 @@ class Products {
         return cy.get(this.products_found_label)
     }
 
+    get_cart_container(): ChainablePageElement {
+        return cy.get(this.cart_container)
+    }
+
     get_cart_contents(): ChainablePageElement {
         return cy.get(this.cart_contents)
     }
@@ -125,11 +140,11 @@ class Products {
     }
     
     open_side_cart(): void {
-        cy.get(this.open_cart_drawer).click()
+        cy.get(this.open_cart_button).click()
     }
     
     close_side_cart(): void {
-        cy.get(this.close_cart_drawer).click()
+        cy.get(this.close_cart_button).click()
     }
     
     add_product_to_cart(index: number): void {
@@ -144,30 +159,48 @@ class Products {
     }
     
     get_cart_footer_data(el: JQuery<HTMLElement>): {
-        sub_price: number;
-        installments: number;
+        subtotal: number;
+        number_installments: number;
         installment_amount: number;
     } {
         const str_sub_price = el.find('.sub-price__val')
         const str_installments = el.find('.sub-price__installment span')
         let sub_price = 0
-        let installments = 0
+        let number_installments = 0
         let installment_amount = 0
     
         if(str_sub_price.length > 0) {
             sub_price = Number(str_sub_price[0].textContent?.trim().match(this.price_regex))
         }
         if(str_installments.length > 0) {
-            installments = Number(str_installments[0].textContent?.trim().match(/(?<=UP TO\s*)\d+/))
+            number_installments = Number(str_installments[0].textContent?.trim().match(/(?<=UP TO\s*)\d+/))
             installment_amount = Number(str_installments[0].textContent?.trim().match(/\d+(?:\.\d{1,2})?$/))
         }
     
         return {
-            sub_price,
-            installments,
+            subtotal: sub_price,
+            number_installments: number_installments,
             installment_amount: installment_amount
         }
         
+    }
+
+    get_cart_chekout_btn(): ChainablePageElement {
+        return cy.get(this.cart_checkout_btn)
+    }
+
+    get_cart_data(): Cypress.Chainable<CartData>{
+        return cy.get(this.cart_container).then((el) => {
+            const footer_data = this.get_cart_footer_data(el)
+            const items = el.find(this.items_in_cart).toArray().map(item => this.get_cart_product_data(Cypress.$(item)) ) 
+            
+            return {
+                items,
+                subtotal: footer_data.subtotal,
+                number_installments: footer_data.number_installments,
+                installment_amount: footer_data.installment_amount
+            }
+        })
     }
 }
 

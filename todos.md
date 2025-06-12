@@ -1,0 +1,2 @@
+- Take session data from cart_data.json and turn it into valid testing data to preload checkout-related pages
+- Adjust cases to use this data as necessary
