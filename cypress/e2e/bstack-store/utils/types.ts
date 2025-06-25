@@ -1,1 +1,1 @@
-export type ChainablePageElement = Cypress.Chainable<JQuery<HTMLElement>>
+export type ChainableJQueryElement = Cypress.Chainable<JQuery<HTMLElement>>
