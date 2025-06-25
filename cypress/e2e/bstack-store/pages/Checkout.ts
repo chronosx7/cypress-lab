@@ -1,5 +1,5 @@
-import { ChainablePageElement } from "../utils/types"
-import { CartItem } from "./Products"
+import { ChainableJQueryElement } from "../utils/types"
+import { CartItem2 } from "./Products"
 
 class Checkout {
     private order_summary_container = '.layout-cart'
@@ -22,14 +22,14 @@ class Checkout {
         cy.get(this.submit_button).click()
     }
 
-    get_list_total(): ChainablePageElement{
+    get_list_total(): ChainableJQueryElement{
         return cy.get(this.order_summary_total)
     }
 
     get_order_summary(): Cypress.Chainable<{
         total_price: number,
         total_products: number,
-        items: CartItem[]
+        items: CartItem2[]
     }> {
         return cy.get(this.order_summary_container).then((el) => {
             const total_price = Number(el.find(this.order_summary_total).text().trim().match(/\d+(?:\.\d{1,2})?$/))
@@ -50,19 +50,19 @@ class Checkout {
         })
     }
 
-    get_first_name(): ChainablePageElement {
+    get_first_name(): ChainableJQueryElement {
         return cy.get(this.form_first_name)
     }
 
-    get_last_name(): ChainablePageElement {
+    get_last_name(): ChainableJQueryElement {
         return cy.get(this.form_last_name)
     }
 
-    get_address(): ChainablePageElement {
+    get_address(): ChainableJQueryElement {
         return cy.get(this.form_address)
     }
 
-    get_province(): ChainablePageElement {
+    get_province(): ChainableJQueryElement {
         return cy.get(this.form_province)
     }
 
@@ -70,14 +70,14 @@ class Checkout {
         return (field[0] as HTMLInputElement).checkValidity()
     }
 
-    get_postal_code(): ChainablePageElement {
+    get_postal_code(): ChainableJQueryElement {
         return cy.get(this.form_postal_code)
     }
 
-    get_continue_shopping(): ChainablePageElement {
+    get_continue_shopping(): ChainableJQueryElement {
         return cy.get(this.continue_shopping_btn)
     }
-    get_receipt_link(): ChainablePageElement {
+    get_receipt_link(): ChainableJQueryElement {
         return cy.get(this.order_receipt_link)
     }
 }

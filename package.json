@@ -3,17 +3,23 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx cypress open"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@eslint/js": "^9.29.0",
     "@tsconfig/node20": "^20.1.4",
     "@types/node": "^22.10.5",
+    "@typescript-eslint/eslint-plugin": "^8.34.1",
     "cypress": "^13.17.0",
-    "typescript": "^5.7.3"
+    "eslint": "^9.29.0",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "ts-unused-exports": "^11.0.1",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.34.1"
   },
   "dependencies": {
     "fs-jetpack": "^5.1.0"
