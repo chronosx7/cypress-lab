@@ -18,6 +18,7 @@ class Checkout {
     private continue_shopping_btn = '.button--tertiary.optimizedCheckout-buttonSecondary'
     private order_receipt_link = '#downloadpdf'
 
+
     submit_form(): void {
         cy.get(this.submit_button).click()
     }
@@ -66,7 +67,7 @@ class Checkout {
         return cy.get(this.form_province)
     }
 
-    get_field_validity(field: JQuery<HTMLElement>): boolean{
+    is_field_valid(field: JQuery<HTMLElement>): boolean{
         return (field[0] as HTMLInputElement).checkValidity()
     }
 

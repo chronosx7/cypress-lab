@@ -7,13 +7,13 @@ interface CartItem {
     quantity: number;
 }
   
-interface CartItem2 {
+export interface CartItem2 {
     name: string;
     price: number;
     quantity: number;
 }
-  
-interface CartData {
+
+export interface CartData {
     items: CartItem2[];
     subtotal: number;
     number_installments: number;
@@ -292,6 +292,15 @@ class Products {
 
     get_cart_chekout_btn(): ChainableJQueryElement {
         return cy.get(this.cart_checkout_btn)
+    }
+
+    click_checkout_btn() {
+        cy.get(this.cart_container).should('be.visible')
+        cy.get(this.cart_checkout_btn).should('be.visible').click()
+    }
+
+    get_checkout_btn_text(): Cypress.Chainable<string> {
+        return cy.get(this.cart_checkout_btn).invoke('text')
     }
 
     get_cart_data(): Cypress.Chainable<CartData>{
