@@ -15,6 +15,7 @@ export default [
     rules: {
     //   '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'unused-imports/no-unused-vars': 'warn',
+      "@typescript-eslint/no-namespace": "off",
       '@typescript-eslint/no-unused-vars': ['warn', { 
         vars: 'all',
         args: 'after-used',

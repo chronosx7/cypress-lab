@@ -17,11 +17,11 @@ describe('completes checkout', () => {
     })
     it('Allows checkout with 1+ items in cart', () => {
         Products.open_side_cart()
-        Products.get_cart_chekout_btn().invoke('text').should('match', /continue shopping/i)
-        Products.get_cart_chekout_btn().click()
+        Products.get_checkout_btn_text().should('match', /continue shopping/i)
+        Products.click_checkout_btn()
         Products.get_cart_container().should('not.be.visible')
         Products.add_product_to_cart(1)
-        Products.get_cart_chekout_btn().invoke('text').should('match', /checkout/i)
+        Products.get_checkout_btn_text().should('match', /checkout/i)
     })
     it('stores product data for checkout', () => {
         Products.add_product_to_cart(1)
@@ -31,12 +31,11 @@ describe('completes checkout', () => {
         Products.add_product_to_cart(2)
         Products.close_side_cart()
         Products.add_product_to_cart(3)
-        Products.get_cart_chekout_btn().invoke('text').should('match', /checkout/i)
 
         Products.get_cart_data().then((data) => {
             cy.wrap(data).as('initial_cart_data')
         })
-        Products.get_cart_chekout_btn().click()
+        Products.click_checkout_btn()
         cy.url().should('include', '/checkout')
 
         cy.get<CartData>('@initial_cart_data').then((cart) => {
@@ -51,57 +50,41 @@ describe('completes checkout', () => {
             })
         })
     })
-    it('shipping form is filled before proceeding', () => {
+    it.only('shipping form is filled before proceeding', () => {
         Products.add_product_to_cart(1)
-        Products.get_cart_chekout_btn().click()
+        Products.click_checkout_btn()
         cy.url().should('include', '/checkout')
         
         Checkout.submit_form()
         cy.url().should('include', '/checkout')
         
-        Checkout.get_first_name().then((input) => {
-            expect(Checkout.get_field_validity(input)).to.be.false
-        })
-        Checkout.get_first_name().type('david').then((input) => {
-            expect(Checkout.get_field_validity(input)).to.be.true
-        })
+        Checkout.get_first_name().checkValidity().should('equal', false)
+        Checkout.get_first_name().type('John').checkValidity().should('equal', true)
 
         Checkout.submit_form()
         cy.url().should('include', '/checkout')
         
-        Checkout.get_last_name().then((input) => {
-            expect(Checkout.get_field_validity(input)).to.be.false
-        })
-        Checkout.get_last_name().type('Doe').then((input) => {
-            expect(Checkout.get_field_validity(input)).to.be.true
-        })
+        Checkout.get_last_name().checkValidity().should('equal', false)
+        Checkout.get_last_name().type('Doe').checkValidity().should('equal', true)
 
         Checkout.submit_form()
         cy.url().should('include', '/checkout')
 
-        Checkout.get_address().then((input) => {
-            expect(Checkout.get_field_validity(input)).to.be.false
-        })
-        Checkout.get_address().type('123 Mulholland Dr').then((input) => {
-            expect(Checkout.get_field_validity(input)).to.be.true
-        })
+        Checkout.get_address().checkValidity().should('equal', false)
+        Checkout.get_address().type('123 Mulholland Dr').checkValidity().should('equal', true)
 
         Checkout.submit_form()
         cy.url().should('include', '/checkout')
 
-        Checkout.get_province().then((input) => {
-            expect(Checkout.get_field_validity(input)).to.be.false
-        })
-        Checkout.get_province().type('Palo Alto').then((input) => {
-            expect(Checkout.get_field_validity(input)).to.be.true
-        })
+        Checkout.get_province().checkValidity().should('equal', false)
+        Checkout.get_province().type('Palo Alto').checkValidity().should('equal', true)
 
         Checkout.submit_form()
         cy.url().should('include', '/checkout')
-        Checkout.get_postal_code().then((input) => {
-            expect(Checkout.get_field_validity(input)).to.be.false
-        })
-        Checkout.get_postal_code().type('abcABC')
+
+        Checkout.get_postal_code().checkValidity().should('equal', false)
+        Checkout.get_postal_code().type('abcABC').checkValidity().should('equal', true)
+
         Checkout.submit_form()
         cy.url().should('include', '/confirmation')
     })
