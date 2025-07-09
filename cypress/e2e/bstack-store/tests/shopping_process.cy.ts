@@ -1,7 +1,12 @@
 import Products from "../pages/Products"
+import { api_sign_in_test_user } from "../utils/Sessions"
 
 describe('Web store and shopping cart actions', () => {
-    beforeEach(()=>{
+    before(() => {
+        cy.clearAllSessionStorage()
+    })
+    beforeEach(() => {
+        api_sign_in_test_user('demouser')
         cy.visit('https://www.bstackdemo.com/')
     })
 
@@ -76,7 +81,7 @@ describe('Web store and shopping cart actions', () => {
         })
     })
 
-    it.only('updates cart with add/remove buttons', () => {
+    it('updates cart with add/remove buttons', () => {
         Products.get_displayed_products()
         Products.add_product_to_cart(0)
         Products.increase_cart_product(0)

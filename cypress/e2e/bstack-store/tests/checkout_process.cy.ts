@@ -4,10 +4,14 @@ import { CartData } from "../pages/Products"
 import Checkout from "../pages/Checkout"
 
 describe('completes checkout', () => {
+    before(() => {
+        cy.clearAllSessionStorage()
+    })
     beforeEach(() => {
         api_sign_in_test_user('demouser')
         cy.visit('https://www.bstackdemo.com/')
     })
+
     it('logs in successfully', () => {
         const logout_btn = '#signin'
         const current_user_label = 'span.username'
@@ -50,7 +54,7 @@ describe('completes checkout', () => {
             })
         })
     })
-    it.only('shipping form is filled before proceeding', () => {
+    it('shipping form is filled before proceeding', () => {
         Products.add_product_to_cart(1)
         Products.click_checkout_btn()
         cy.url().should('include', '/checkout')
