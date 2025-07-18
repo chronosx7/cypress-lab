@@ -1,5 +1,5 @@
 import { ChainableJQueryElement } from "../utils/types"
-import { CartItem2 } from "./Products"
+import { CartItem } from "./Products"
 
 class Checkout {
     private order_summary_container = '.layout-cart'
@@ -30,7 +30,7 @@ class Checkout {
     get_order_summary(): Cypress.Chainable<{
         total_price: number,
         total_products: number,
-        items: CartItem2[]
+        items: CartItem[]
     }> {
         return cy.get(this.order_summary_container).then((el) => {
             const total_price = Number(el.find(this.order_summary_total).text().trim().match(/\d+(?:\.\d{1,2})?$/))

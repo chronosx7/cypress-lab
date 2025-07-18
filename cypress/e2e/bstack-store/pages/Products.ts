@@ -1,20 +1,14 @@
 import { ChainableJQueryElement } from "../utils/types"
 
-interface CartItem {
+export interface CartItem {
     name: string;
-    desc: string;
+    desc?: string;
     price: number;
     quantity: number;
 }
   
-export interface CartItem2 {
-    name: string;
-    price: number;
-    quantity: number;
-}
-
 export interface CartData {
-    items: CartItem2[];
+    items: CartItem[];
     subtotal: number;
     number_installments: number;
     installment_amount: number;
@@ -62,11 +56,9 @@ class Products {
     private cart_item_quantity = '.shelf-item__details .desc'
     private cart_change_item_buttons = 'button.change-product-button'
 
-    private price_regex = /\d+(?:\.\d{1,2})?/
+    private product_favorite_btn = 'button.MuiButtonBase-root.MuiIconButton-root.Button'
 
-    unused_method() {
-        console.log('unused')
-    }
+    private price_regex = /\d+(?:\.\d{1,2})?/
 
     get_listed_product_data(el: JQuery<HTMLElement>): ListProductData {
         const name = el.find(this.product_title).text().trim();
@@ -125,7 +117,7 @@ class Products {
             })
     }
     
-    get_cart_product_data(el: JQuery<HTMLElement>): CartItem2 {
+    get_cart_product_data(el: JQuery<HTMLElement>): CartItem {
         const name = el.find(this.cart_item_name).text().trim()
         const price = Number(el.find(this.cart_item_price).text().match(this.price_regex))
         const quantity = Number(el.find(this.cart_item_quantity).text().match(this.price_regex))
@@ -137,7 +129,7 @@ class Products {
         }
     }
 
-    sync_read_cart_product_data(index: number): CartItem2 {
+    sync_read_cart_product_data(index: number): CartItem {
         const cart_items = Cypress.$(this.items_in_cart)
         const target = Cypress.$(cart_items?.[index])
 
@@ -254,6 +246,16 @@ class Products {
     
     add_product_to_cart(index: number): void {
         cy.get(this.displayed_products).should('be.visible').eq(index).find(this.add_product_btn).click()
+    }
+
+    toggle_favorite_product(index: number): void {
+        cy.get(this.displayed_products).should('be.visible').eq(index).find(this.product_favorite_btn).click()
+    }
+
+    is_marked_favorite(index: number): Cypress.Chainable<boolean> {
+        return cy.get(this.displayed_products).should('be.visible').eq(index).find(this.product_favorite_btn).then((el) => {
+            return Cypress.$(el).hasClass('clicked')
+        })
     }
 
     extract_change_item_buttons(el: JQuery<HTMLElement>): JQuery<HTMLElement>[] {
