@@ -10,7 +10,9 @@ export function api_sign_in_test_user(username: string): void {
                     password: user.password
                 }
             }).then(() => {
-                window.sessionStorage.setItem('username', user.userName)
+                cy.window().then((win) => {
+                    win.sessionStorage.setItem('username', user.userName)
+                })
             })
         })
     
