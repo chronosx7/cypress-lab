@@ -6,6 +6,7 @@ import Checkout from "../pages/Checkout"
 describe('completes checkout', () => {
     before(() => {
         cy.clearAllSessionStorage()
+        Cypress.session.clearAllSavedSessions()
     })
     beforeEach(() => {
         api_sign_in_test_user('demouser')
