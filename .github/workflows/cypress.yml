@@ -2,32 +2,64 @@ name: E2E Tests
 
 on:
   push:
-    branches: [master]
+    branches: [ main ]
   pull_request:
-    branches: [master]
 
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    # 1. Checkout repository
+    - name: Checkout
+      uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+    # 2. Setup Node.js
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+    # 3. Get Cypress version from package.json
+    - name: Get Cypress version
+      id: get_cypress_version
+      run: echo "version=$(node -p \"require('./package.json').devDependencies.cypress || require('./package.json').dependencies.cypress\")" >> $GITHUB_OUTPUT
 
-      - name: Run Cypress tests
-        run: npx cypress run
+    # 4. Cache Cypress binary separately
+    - name: Cache Cypress binary
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/Cypress
+        key: cypress-${{ runner.os }}-${{ steps.get_cypress_version.outputs.version }}
+        restore-keys: |
+          cypress-${{ runner.os }}-
 
-      - name: Upload screenshots
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-screenshots
-          path: cypress/screenshots
+    # 5. Cache node_modules separately
+    - name: Cache node_modules
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: node-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+        restore-keys: |
+          node-${{ runner.os }}-
+
+    # 6. Install dependencies
+    - name: Install dependencies
+      run: npm ci
+
+    # 7. Verify Cypress (ensures binary is usable)
+    - name: Verify Cypress
+      run: npx cypress verify
+
+    # 8. Run Cypress tests
+    - name: Run Cypress
+      run: npx cypress run
+
+    # 9. Update evidence artifacts
+    - name: Upload screenshots
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: cypress-screenshots
+        path: cypress/screenshots
