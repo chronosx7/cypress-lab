@@ -18,7 +18,7 @@ describe('completes checkout', () => {
         const current_user_label = 'span.username'
 
         cy.get(current_user_label).should('be.visible')
-        cy.get(logout_btn).scrollIntoView().should('be.visible').invoke('text').should('match', /logout/i)
+        cy.get(logout_btn).scrollIntoView().should('be.visible').contains(/logout/i)
     })
     it('Allows checkout with 1+ items in cart', () => {
         Products.open_side_cart()
