@@ -4,6 +4,7 @@ import { api_sign_in_test_user } from "../utils/Sessions"
 describe('Web store and shopping cart actions', () => {
     before(() => {
         cy.clearAllSessionStorage()
+        Cypress.session.clearAllSavedSessions()
     })
     beforeEach(() => {
         api_sign_in_test_user('demouser')

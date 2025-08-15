@@ -14,7 +14,7 @@ export interface CartData {
     installment_amount: number;
 }
 
-interface ListProductData {
+export interface ListProductData {
     name: string;
     currency: string;
     price: number;
