@@ -1,6 +1,8 @@
 import Products from "../pages/Products"
 import { ListProductData } from "../pages/Products"
 import { api_sign_in_test_user } from "../utils/Sessions"
+import { CartItem } from "../pages/Products"
+import Checkout from "../pages/Checkout"
 
 describe('Manage favorite products section', () => {
     before(() => {
@@ -40,7 +42,7 @@ describe('Manage favorite products section', () => {
     })
     // Products unmarked as favorite in favorites pages update instantly
     // Favorites page list number of favorite products
-    it.only('Favorite page updates immediately', () => {
+    it('Favorite page updates immediately', () => {
         Products.toggle_favorite_product(2)
         Products.is_marked_favorite(2).should('equal', true)
 
@@ -59,5 +61,75 @@ describe('Manage favorite products section', () => {
     
     // Products in favorites can be added to shopping cart
     // Purchase flow can be completed starting in favorite page
+    it.only('', () => {
+        Products.toggle_favorite_product(2)
+        Products.toggle_favorite_product(3)
+
+        cy.get('a#favourites').click()
+        cy.url().should('contain', 'favourites')
+
+        Products.get_displayed_products_count().should('equal', 2)
+
+        Products.add_product_to_cart(0)
+        Products.close_side_cart()
+        Products.add_product_to_cart(0)
+        Products.close_side_cart()
+        Products.add_product_to_cart(1)
+
+        Products.side_cart_is_open().then(() => {
+            const product_1 = Products.sync_read_listed_product_data(0)
+            const product_2 = Products.sync_read_listed_product_data(1)
+            const cart_contents = Products.sync_read_cart_contents()
+            const footer = Products.sync_read_cart_footer()
+            const expected_subtotal = cart_contents.reduce((price_sum, current) => { 
+                return price_sum += current.price * current.quantity
+            }, 0)
+
+            expect(product_1.name).to.equal(cart_contents[0].name)
+            expect(product_2.name).to.equal(cart_contents[1].name)
+            expect(product_1.price).to.equal(cart_contents[0].price)
+            expect(product_2.price).to.equal(cart_contents[1].price)
+            expect(cart_contents[0].quantity).to.equal(2)
+            expect(cart_contents[1].quantity).to.equal(1)
+
+            expect(footer.subtotal).to.equal(expected_subtotal)
+
+            // Store cart data
+            cy.wrap({
+                'contents': cart_contents,
+                'footer': footer
+            }).as('prev_cart')
+
+        })
+
+        Products.click_checkout_btn()
+        cy.url().should('contain', 'checkout')
+
+        // Validate cart data persists in checkout page
+        cy.get<{
+            contents: CartItem[], 
+            footer: {subtotal: number, installments: number, installments_amnt: number}
+        }>('@prev_cart').then((prev_cart) => {
+            Checkout.get_order_summary().then((current_cart) => {
+                let found_names = 0
+                let product_count = 0
+    
+                for(const current of current_cart.items) {
+                    for(const prev of prev_cart.contents) {
+                        if(current.name == prev.name) {
+                            expect(current.quantity).to.equal(prev.quantity)
+                            found_names++
+                            product_count += prev.quantity
+                        }
+                    }
+                }
+   
+                expect(found_names).to.equal(prev_cart.contents.length)
+                expect(prev_cart.footer.subtotal).to.equal(current_cart.total_price)
+                expect(current_cart.product_count).to.equal(product_count)
+            })
+        })
+
+    })
 })
 
