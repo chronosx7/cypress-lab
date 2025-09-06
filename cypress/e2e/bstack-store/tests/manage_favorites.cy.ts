@@ -102,25 +102,24 @@ describe('Manage favorite products section', () => {
         })
 
         Products.click_checkout_btn()
-        cy.url().should('contain', 'checkout').then(() => {
-            Checkout.get_order_summary().then((current_cart) => {
-                let found_names = 0
-                let product_count = 0
-    
-                for(const current of current_cart.items) {
-                    for(const prev of prev_cart.contents) {
-                        if(current.name == prev.name) {
-                            expect(current.quantity).to.equal(prev.quantity)
-                            found_names++
-                            product_count += prev.quantity
-                        }
+        cy.url().should('contain', 'checkout')
+        Checkout.get_order_summary().then((current_cart) => {
+            let found_names = 0
+            let product_count = 0
+
+            for(const current of current_cart.items) {
+                for(const prev of prev_cart.contents) {
+                    if(current.name == prev.name) {
+                        expect(current.quantity).to.equal(prev.quantity)
+                        found_names++
+                        product_count += prev.quantity
                     }
                 }
-   
-                expect(found_names).to.equal(prev_cart.contents.length)
-                expect(prev_cart.footer.subtotal).to.equal(current_cart.total_price)
-                expect(current_cart.product_count).to.equal(product_count)
-            })
+            }
+
+            expect(found_names).to.equal(prev_cart.contents.length)
+            expect(prev_cart.footer.subtotal).to.equal(current_cart.total_price)
+            expect(current_cart.product_count).to.equal(product_count)
         })
     })
 })
