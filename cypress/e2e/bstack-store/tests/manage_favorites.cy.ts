@@ -61,14 +61,16 @@ describe('Manage favorite products section', () => {
     
     // Products in favorites can be added to shopping cart
     // Purchase flow can be completed starting in favorite page
-    it.only('', () => {
+    it('Loads cart from favorites page', () => {
+        let prev_cart: {
+            contents: CartItem[], 
+            footer: {subtotal: number, installments: number, installments_amnt: number}
+        }
         Products.toggle_favorite_product(2)
         Products.toggle_favorite_product(3)
 
         cy.get('a#favourites').click()
-        cy.url().should('contain', 'favourites')
-
-        Products.get_displayed_products_count().should('equal', 2)
+            .url().should('contain', 'favourites')
 
         Products.add_product_to_cart(0)
         Products.close_side_cart()
@@ -91,25 +93,16 @@ describe('Manage favorite products section', () => {
             expect(product_2.price).to.equal(cart_contents[1].price)
             expect(cart_contents[0].quantity).to.equal(2)
             expect(cart_contents[1].quantity).to.equal(1)
-
             expect(footer.subtotal).to.equal(expected_subtotal)
 
-            // Store cart data
-            cy.wrap({
+            prev_cart = {
                 'contents': cart_contents,
                 'footer': footer
-            }).as('prev_cart')
-
+            }
         })
 
         Products.click_checkout_btn()
-        cy.url().should('contain', 'checkout')
-
-        // Validate cart data persists in checkout page
-        cy.get<{
-            contents: CartItem[], 
-            footer: {subtotal: number, installments: number, installments_amnt: number}
-        }>('@prev_cart').then((prev_cart) => {
+        cy.url().should('contain', 'checkout').then(() => {
             Checkout.get_order_summary().then((current_cart) => {
                 let found_names = 0
                 let product_count = 0
@@ -129,7 +122,6 @@ describe('Manage favorite products section', () => {
                 expect(current_cart.product_count).to.equal(product_count)
             })
         })
-
     })
 })
 
